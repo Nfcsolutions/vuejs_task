@@ -5,6 +5,7 @@
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
+           
             <h4 class="card-title">{{member.name}} <label v-bind:class="{'badge badge-danger': member.is_inactive, 'badge badge-teal': !member.is_inactive }">{{ ( member.is_inactive) ? 'Inactive' : 'Active' }}</label></h4>
              <h5 class="card-title text-muted">Code: {{member.code}} </h5>
             <p class="card-description">
@@ -60,7 +61,7 @@
               &nbsp;
             </p>
             <div class="table-responsive">
-              <table class="table center-aligned-table">
+             <table class="table center-aligned-table">
                 <thead>
                   <tr>
                     <th class="border-bottom-0">ID Transaction</th>
@@ -70,12 +71,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="transaction in member.mummy_money"
+                  <tr v-for="transaction in member.transactions"
                     :key="transaction.transaction_id">
                     <td>{{ transaction.transaction_id }}</td>
                     <td>$ {{ transaction.amount }}</td>
                     <td><label v-bind:class="{'badge badge-danger': transaction.amount &lt; 0, 'badge badge-teal': transaction.amount &gt; 0}">{{transaction.amount &lt; 0 ? 'Paid' : 'Received'}}</label></td>
-                    <td>{{ transaction.created_at }}</td>
+                    <td>{{ transaction.created_on }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -91,15 +92,15 @@
           <div class="card-body">
             <h4 class="card-title">My Invited Members</h4>
             <p class="card-description">
-              &nbsp;
+              &nbsp;{{member.length}}
             </p>
             <div class="table-responsive">
-              <table class="table center-aligned-table" v-if="member.my_members.length > 0">
+             <table class="table center-aligned-table" v-if="member.members.length > 0">
                 <thead>
                   <tr>
                     <th class="border-bottom-0">ID</th>
                     <th class="border-bottom-0">Name</th>
-                    <th class="border-bottom-0">Member Code</th>
+                  <!--  <th class="border-bottom-0">Member Code</th>-->
                     <th class="border-bottom-0">Charisma</th>
                     <th class="border-bottom-0">Experience</th>
                     <th class="border-bottom-0">Innocence</th>
@@ -109,21 +110,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="invited_member in member.my_members"
-                    :key="invited_member.id">
-                    <td>{{ invited_member.id }}</td>
+                  <tr v-for="invited_member in member.members"
+                    :key="invited_member._id">
+                    <td>{{ invited_member._id }}</td>
                     <td>{{ invited_member.name }}</td>
-                    <td>{{ invited_member.code }}</td>
+                  <!-- <td>{{ invited_member.code }}</td>-->
                     <td>{{ invited_member.charisma | fixDigits }}</td>
                     <td>{{ invited_member.experience | fixDigits }}</td>
                     <td>{{ invited_member.innocence | fixDigits }}</td>
                     <td>{{ invited_member.max_weeks }}</td>
-                    <td><label v-bind:class="{'badge badge-danger': invited_member.is_inactive, 'badge badge-teal': !invited_member.is_inactive }">{{ ( invited_member.is_inactive) ? 'Inactive' : 'Active' }}</label></td>
-                    <td><b-button variant="primary" v-on:click="findMember(invited_member.id)"><i class="mdi mdi-eye"></i>View</b-button></td>
+                    <td><label v-bind:class="{'badge badge-danger': invited_member.status, 'badge badge-teal': !invited_member.status }">{{ ( invited_member.status) ? 'Inactive' : 'Active' }}</label></td>
+                    <td><b-button variant="primary" v-on:click="findMember(invited_member._id)"><i class="mdi mdi-eye"></i>View</b-button></td>
                   </tr>
                 </tbody>
               </table>
-              <div v-if="member.my_members.length == 0">
+              <div v-if="member.length == 0">
                 <h5><i class="mdi mdi-heart-broken icon-md text-danger"></i>&nbsp;No members in my list </h5>
               </div>
             </div>
@@ -149,6 +150,7 @@ export default {
     }
   },
   created () {
+    debugger;
     let _id = this.$route.params.id
     this.findMember(_id)
   },
@@ -158,11 +160,12 @@ export default {
       this.$router.push({ name: 'memberdetail', params: { id: _id } })
       MemberService.getMember(_id).then(
         member => {
+          debugger;
+           console.log(member);
+            console.log(member.members);
           this.member = member
-          this.member.mummy_money.map(_transaction => {
-            this.total += _transaction.amount
-          })
-          this.my_members = this.member.my_members.length
+
+         // this.my_members = this.member.length
         }).catch(_error => console.log(_error))
         .finally(() => {
           this.loading = false

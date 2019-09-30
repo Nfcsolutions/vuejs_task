@@ -43,7 +43,6 @@ const MemberService = {
 
     try {
       const response = await ApiService.get(request.url)
-      console.log(response);
       return response.data
     } catch (error) {
       throw new Error('ERROR::', error)

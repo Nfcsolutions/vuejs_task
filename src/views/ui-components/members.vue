@@ -5,7 +5,6 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">List of members  ( {{ members.length }} )</h5>
-            <p>{{members[0]["name"]}}</p>
             <p class="card-description">
               People who have joined program
             </p>
@@ -31,8 +30,8 @@
                     <td>{{ member.name }}</td>
                     <td>{{ member.charisma | fixDigits }}</td>
                     <td>{{ member.experience | fixDigits }}</td>
-                    <td>{{ member.innocence  }}</td>
-                    <td class="pr-0 text-center" v-if="member.members_count > 5"><b-badge pill variant="outline-primary">{{ member.members_count }}</b-badge></td>
+                    <td> {{ member.innocence  }} </td>
+                    <td class="pr-0 text-center" v-if="member.members_count >= 5"><b-badge pill variant="outline-primary">{{ member.members_count }}</b-badge></td>
                     <td class="pr-0 text-center" v-if="member.members_count == 0"><b-badge pill variant="outline-danger">{{ member.members_count }}</b-badge></td>
                     <td class="pr-0 text-center" v-if="member.members_count > 0 && member.members_count < 5"><b-badge pill variant="outline-warning">{{ member.members_count}}</b-badge></td>
                     <td>{{ member.max_weeks }}</td>
@@ -62,7 +61,7 @@ export default {
   created () {
     MemberService.getList().then(
       members => {
-        this.members = members.member_data
+        this.members = members.data
       }).catch(_error => console.log(_error))
       .finally(() => {
         this.loading = false
